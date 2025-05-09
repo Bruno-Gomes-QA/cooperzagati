@@ -9,7 +9,7 @@ export function Carousel() {
     loop: true,
     slides: { perView: 1 },
     created() {
-      setInterval(() => slider.current?.next(), 10000);
+      setInterval(() => slider.current?.next(), 8000);
     },
   });
 
