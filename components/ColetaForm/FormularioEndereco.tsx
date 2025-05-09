@@ -87,10 +87,6 @@ export function FormularioEndereco({
               />
           </div>
       {emCasa === false && endereco && <ResultadoEndereco endereco={endereco} />}
-
-          <Button type="submit" className="w-full bg-green-600 hover:bg-green-500 text-white rounded-full">
-            Enviar informações
-          </Button>
         </>
       )}
     </form>

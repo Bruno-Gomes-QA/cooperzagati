@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { FormHeader } from './FormHeader'
 import { ImagemLateral } from './ImagemLateral'
 import { FormularioEndereco } from './FormularioEndereco'
-import { ResultadoEndereco } from './ResultadoEndereco'
+import { MapaRotaColeta } from './MapaRotaColeta'
 
 export function ColetaForm() {
   const [emCasa, setEmCasa] = useState<null | boolean>(null)
@@ -113,7 +113,6 @@ export function ColetaForm() {
 
       <div className="bg-[#0a0a0a] border border-green-600 rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden">
         <ImagemLateral />
-
         <FormularioEndereco
           emCasa={emCasa}
           setEmCasa={setEmCasa}
@@ -123,6 +122,11 @@ export function ColetaForm() {
           endereco={endereco}
         />
       </div>
+      {emCasa !== null && endereco && (
+        <>
+          <MapaRotaColeta endereco={endereco} />
+        </>
+      )}
     </section>
   )
 }
