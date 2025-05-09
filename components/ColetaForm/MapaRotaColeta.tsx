@@ -48,10 +48,7 @@ export function MapaRotaColeta({ endereco }: MapaRotaColetaProps) {
           travelMode: google.maps.TravelMode.DRIVING
         },
         (result, status) => {
-          if (
-            status === google.maps.DirectionsStatus.OK &&
-            directionsRendererRef.current
-          ) {
+          if (result && status === google.maps.DirectionsStatus.OK && directionsRendererRef.current) {
             directionsRendererRef.current.setDirections(result)
 
             const leg = result.routes[0]?.legs[0]
@@ -84,6 +81,12 @@ export function MapaRotaColeta({ endereco }: MapaRotaColetaProps) {
         <GoogleMap
           center={{ lat: -23.6261, lng: -46.7912 }}
           zoom={14}
+          options={{
+            gestureHandling: 'greedy',
+            fullscreenControl: false,
+            mapTypeControl: false,
+            streetViewControl: false
+          }}
           mapContainerStyle={{ width: '100%', height: '100%' }}
           onLoad={(map) => {
             mapRef.current = map
