@@ -9,6 +9,7 @@ export function FeatureSection() {
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
         <FeatureCard
           icon={<Leaf className="text-green-400" />}
+          redirect=''
           title="Aprenda sobre Reciclagem"
           description="Não sabe por onde começar? Veja nossos tutoriais e aprenda a reciclar com consciência."
           borderColor="border-green-800"
@@ -16,6 +17,7 @@ export function FeatureSection() {
         />
         <FeatureCard
           icon={<MapPin className="text-green-400" />}
+          redirect='coletaform'
           title="Pontos de Coleta"
           description="Encontre um ponto de coleta sempre perto de você e contribua para um mundo melhor."
           borderColor="border-green-800"
@@ -23,6 +25,7 @@ export function FeatureSection() {
         />
         <FeatureCard
           icon={<Sparkles className="text-green-400" />}
+          redirect=''
           title="Faça Parte"
           description="Junte-se à comunidade Cooperzagati e ajude a transformar o mundo com pequenas ações."
           borderColor="border-green-800"

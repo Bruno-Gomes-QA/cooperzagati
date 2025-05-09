@@ -1,9 +1,11 @@
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 
 interface FeatureCardProps {
   icon: ReactNode
+  redirect: string
   title: string
   description: string
   borderColor?: string
@@ -12,6 +14,7 @@ interface FeatureCardProps {
 
 export function FeatureCard({
   icon,
+  redirect,
   title,
   description,
   borderColor = 'border-green-800',
@@ -28,10 +31,11 @@ export function FeatureCard({
       <h3 className="text-lg font-semibold text-white">{title}</h3>
       <p className="text-sm text-white/80 max-w-xs">{description}</p>
       <Button
+        asChild
         variant="outline"
-        className="mt-2 border-green-500 text-green-300 hover:bg-green-800/10 rounded-full px-6 py-2"
+        className="mt-2 border-green-500 text-green-300 hover:bg-green-600/10 rounded-full"
       >
-        {buttonLabel}
+        <Link href={redirect}>{buttonLabel}</Link>
       </Button>
     </div>
   )
