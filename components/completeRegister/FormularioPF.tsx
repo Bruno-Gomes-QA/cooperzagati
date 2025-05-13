@@ -1,0 +1,86 @@
+'use client'
+
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
+import { MaskedInput } from './MaskedInput'
+
+interface Props {
+  formData: any
+  setFormData: any
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+}
+
+export function FormularioPF({ formData, setFormData, handleChange }: Props) {
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="nome_completo">Nome completo</Label>
+        <Input name="nome_completo" required onChange={handleChange} className="rounded-md" />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="cpf">CPF (opcional)</Label>
+        <Input
+          name="cpf"
+          placeholder="Ex: 123.456.789-00"
+          value={formData.cpf || ''}
+          onChange={handleChange}
+          className="rounded-md"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="telefone">Telefone para contato</Label>
+        <Input
+          name="telefone"
+          placeholder="Ex: (11) 91234-5678"
+          value={formData.telefone || ''}
+          onChange={handleChange}
+          className="rounded-md"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="moradores">Quantas pessoas moram com você?</Label>
+        <select
+          name="moradores"
+          onChange={handleChange}
+          className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
+        >
+          <option value="">Selecione...</option>
+          <option value="1-3">1 à 3 pessoa</option>
+          <option value="4-6">4 à 6 pessoas</option>
+          <option value="7+">7 ou mais</option>
+        </select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="material">Tipo de material que mais recicla</Label>
+        <select
+          name="material"
+          onChange={handleChange}
+          className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
+        >
+          <option value="">Selecione...</option>
+          <option value="Plástico">Plástico</option>
+          <option value="Papelão">Papelão</option>
+          <option value="Latinha">Latinha</option>
+          <option value="Vidro">Vidro</option>
+          <option value="Orgânico">Orgânico</option>
+          <option value="Eletrônicos">Eletrônicos</option>
+          <option value="Outros">Outros</option>
+        </select>
+      </div>
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id="lembretes"
+          onCheckedChange={(checked) =>
+            setFormData((prev: any) => ({ ...prev, receber_dicas: !!checked }))
+          }
+        />
+        <Label htmlFor="lembretes">Deseja receber lembretes ou dicas?</Label>
+      </div>
+    </>
+  )
+}

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { GoogleLoginButton } from "@/components/ExtraUI/GoogleLoginButton";
 
 export function Header() {
   return (
@@ -11,7 +12,7 @@ export function Header() {
           height={40}
           className="object-contain"
         />
-        {/*<GoogleLoginButton/>*/}
+        <GoogleLoginButton/>
       </div>
       <div className="h-[3px] w-full bg-gradient-to-r from-green-800 via-green-500 to-white shadow-[0_0_20px_2px_rgba(34,197,94,0.5)]" />
     </header>
