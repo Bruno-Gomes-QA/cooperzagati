@@ -29,19 +29,39 @@ export function PessoaForm({ tipo }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     const enderecoCompleto = endereco
       ? `${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade}/${endereco.uf}`
       : ''
 
-    const { error } = await supabase.from('cadastros_complementares').insert({
-      tipo,
-      ...formData,
+    const { data: session } = await supabase.auth.getUser()
+    const user = session?.user
+
+    if (!user) return alert('Usuário não autenticado')
+
+    const updates = {
+      cadastro_completo: true,
+      nome: formData.nome_completo || formData.responsavel || user.user_metadata.name,
+    }
+
+    await supabase
+      .from('usuarios')
+      .update(updates)
+      .eq('email', user.email)
+
+    const cadastroData = {
+      usuario_id: user.id,
       endereco: enderecoCompleto,
-    })
+      ...formData,
+    }
+
+    const table = tipo === 'pf' ? 'cadastro_pf' : 'cadastro_pj'
+    const { error } = await supabase.from(table).insert(cadastroData)
 
     if (!error) router.push('/dashboard')
     else alert('Erro ao salvar dados!')
   }
+
 
   return (
     <section className="w-full max-w-4xl mx-auto mt-10 bg-[#0a0a0a] border border-green-600 rounded-3xl shadow-2xl p-8 sm:p-10">

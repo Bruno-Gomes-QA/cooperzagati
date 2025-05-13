@@ -23,7 +23,7 @@ export function GoogleLoginButton() {
 
   if (usuario) {
     return (
-      <Link href="/dashboard">
+      <Link href="/completarcadastro">
         <Button
           variant="outline"
           className="group flex items-center gap-2 rounded-full border border-white/20 bg-black px-5 py-2 hover:bg-white/10 transition-colors"

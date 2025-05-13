@@ -24,7 +24,7 @@ export function useRegistrarUsuario() {
 
       const { data: existente } = await supabase
         .from('usuarios')
-        .select('id')
+        .select('id, cadastro_completo')
         .eq('email', user.email)
         .single()
 
@@ -34,17 +34,26 @@ export function useRegistrarUsuario() {
           email: user.email,
           foto_url: user.user_metadata.avatar_url,
           papel: 'usuario',
+          cadastro_completo: false,
         })
 
-        if (error) {
-          console.error('Erro ao inserir usuário:', error)
-        }
+        if (error) console.error('Erro ao criar usuário:', error)
+
+        router.push('/completarcadastro')
+        return
       }
+
+      if (!existente.cadastro_completo) {
+        router.push('/completarcadastro')
+        return
+      }
+
       setLoading(false)
     }
 
     registrar()
   }, [])
+
 
   return { user, loading }
 }

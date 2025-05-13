@@ -5,14 +5,14 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function AuthCallback() {
-  const { loading } = useRegistrarUsuario()
+  const { user, loading } = useRegistrarUsuario()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && user) {
       router.push('/completarcadastro')
     }
-  }, [loading])
+  }, [loading, user])
 
   return <p className="text-white p-10">Redirecionando...</p>
 }
