@@ -11,7 +11,7 @@ export function useRegistrarUsuario() {
   const router = useRouter()
 
   useEffect(() => {
-    const registrar = async () => {
+    const verificarCadastro = async () => {
       const { data: sessionData } = await supabase.auth.getUser()
       const user = sessionData?.user
 
@@ -22,41 +22,21 @@ export function useRegistrarUsuario() {
 
       setUser(user)
 
-      const { data: existente, error } = await supabase
-        .from('usuarios')
-        .select('id, cadastro_completo')
-        .eq('email', user.email)
-        .single()
+      const { data: registro } = await supabase
+        .from('user_registration_status')
+        .select('full_registration')
+        .eq('auth_id', user.id)
+        .maybeSingle()
 
-      if (!existente) {
-        const { error: insertError } = await supabase.from('usuarios').insert({
-          nome: user.user_metadata.name,
-          email: user.email,
-          foto_url: user.user_metadata.avatar_url,
-          papel: 'usuario',
-          cadastro_completo: false,
-        })
-
-        if (insertError) {
-          console.error('Erro ao criar usuário:', insertError)
-          setLoading(false)
-          return
-        }
-
+      if (!registro?.full_registration) {
         router.replace('/completarcadastro')
-        return
+      } else {
+        router.replace('/dashboard')
       }
-
-      if (!existente.cadastro_completo) {
-        router.replace('/completarcadastro')
-        return
-      }
-
-      router.replace('/dashboard')
     }
 
-    registrar()
-  }, [])
+    verificarCadastro()
+  }, [router])
 
   return { user, loading }
 }

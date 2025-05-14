@@ -20,7 +20,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
 
       <div className="space-y-2">
         <Label htmlFor="cnpj">CNPJ (Opcional)</Label>
-        <Input name="cnpj" required placeholder="Ex: 12.345.678/0001-90" onChange={handleChange} className="rounded-md" />
+        <Input name="cnpj" placeholder="Ex: 12.345.678/0001-90" onChange={handleChange} className="rounded-md" />
       </div>
 
       <div className="space-y-2">
@@ -37,6 +37,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
         <Label htmlFor="tipo_local">Tipo de local</Label>
         <select
           name="tipo_local"
+          required
           onChange={handleChange}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
@@ -54,6 +55,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
         <Label htmlFor="quantidade_semanal">Quantidade estimada de recicláveis por semana</Label>
         <select
           name="quantidade_semanal"
+          required
           onChange={handleChange}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
@@ -69,6 +71,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
         <Label htmlFor="infraestrutura">Já possui infraestrutura de coleta?</Label>
         <Input
           name="infraestrutura"
+          required
           placeholder="Ex: contêiner, gaiola, sacos de lixo reforçados..."
           onChange={handleChange}
           className="rounded-md"
@@ -79,6 +82,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
         <Label htmlFor="dias_preferencia">Dias e horários preferenciais</Label>
         <select
           name="dias_preferencia"
+          required
           onChange={handleChange}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
@@ -92,7 +96,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
 
       <div className="space-y-2">
         <Label htmlFor="telefone">Telefone para contato</Label>
-        <Input name="telefone" placeholder="Ex: (11) 91234-5678" onChange={handleChange} className="rounded-md" />
+        <Input name="telefone" required placeholder="Ex: (11) 91234-5678" onChange={handleChange} className="rounded-md" />
       </div>
 
       <div className="flex items-center gap-2">

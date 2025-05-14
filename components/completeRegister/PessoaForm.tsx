@@ -24,66 +24,65 @@ export function PessoaForm({ tipo }: Props) {
   const [emCasa, setEmCasa] = useState<null | boolean>(null)
   const router = useRouter()
 
+  const { usuario } = useAuth()
+  if (!usuario) return null
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
+    if (!endereco) {
+      alert('Por favor, preencha o endereço antes de finalizar o cadastro.')
+      return
+    }
     const enderecoCompleto = endereco
       ? `${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade}/${endereco.uf}`
       : ''
 
-    const { usuario, loading } = useAuth()
+    const authId = usuario.id
+    let cadastroData: any = {}
 
-    const user = usuario
-    if (!user) return alert('Usuário não autenticado')
-
-    const updates = {
-      cadastro_completo: true,
-      nome: formData.nome_completo || formData.responsavel
-    }
-    console.log(user)
-    let cadastroData: any = {
-    }
-      if (tipo === 'pf') {
-        cadastroData = {
-          usuario_id: user.id,
-          cpf: formData.cpf,
-          moradores: formData.moradores,
-          material: formData.material,
-          telefone: formData.telefone,
-          receber_dicas: formData.receber_dicas ?? false,
-          endereco: enderecoCompleto,
-        }
-      } else {
+    console.log('Dados do formulário:', usuario)
+    if (tipo === 'pf') {
       cadastroData = {
-        ...cadastroData,
+        auth_id: authId,
+        full_name: formData.nome_completo,
+        cpf: formData.cpf,
+        phone: formData.telefone,
+        household_size: formData.moradores,
+        main_recycled_material: formData.material,
+        wants_tips: formData.receber_dicas ?? false,
+        address: enderecoCompleto,
+        full_registration: true,
+      }
+    } else {
+      cadastroData = {
+        auth_id: authId,
+        organization_name: formData.nome_empresa,
         cnpj: formData.cnpj,
-        responsavel: formData.responsavel,
-        nome_empresa: formData.nome_empresa,
+        contact_person: formData.responsavel,
         email: formData.email,
-        tipo_local: formData.tipo_local,
-        quantidade_semanal: formData.quantidade_semanal,
-        infraestrutura: formData.infraestrutura,
-        dias_preferencia: formData.dias_preferencia,
-        telefone: formData.telefone,
-        quer_parceria: formData.quer_parceria ?? false,
+        location_type: formData.tipo_local,
+        weekly_waste_amount: formData.quantidade_semanal,
+        collection_infrastructure: formData.infraestrutura,
+        preferred_days: formData.dias_preferencia,
+        phone: formData.telefone,
+        interested_in_partnership: formData.quer_parceria ?? false,
+        address: enderecoCompleto,
+        full_registration: true,
       }
     }
 
-    const table = tipo === 'pf' ? 'cadastro_pf' : 'cadastro_pj'
+    const table = tipo === 'pf' ? 'individual_users' : 'organization_users'
     const { error } = await supabase.from(table).insert(cadastroData)
 
-    if (!error) {
-      await supabase
-        .from('usuarios')
-        .update(updates)
-        .eq('email', user.email)
-      router.push('/dashboard')
-    } else {
+    if (error) {
+      console.error(error)
       alert('Erro ao salvar dados!')
+    } else {
+      router.push('/dashboard')
     }
   }
 
