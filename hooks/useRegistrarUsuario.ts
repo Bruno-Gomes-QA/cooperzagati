@@ -16,20 +16,20 @@ export function useRegistrarUsuario() {
       const user = sessionData?.user
 
       if (!user) {
-        router.push('/')
+        router.replace('/')
         return
       }
 
       setUser(user)
 
-      const { data: existente } = await supabase
+      const { data: existente, error } = await supabase
         .from('usuarios')
         .select('id, cadastro_completo')
         .eq('email', user.email)
         .single()
 
       if (!existente) {
-        const { error } = await supabase.from('usuarios').insert({
+        const { error: insertError } = await supabase.from('usuarios').insert({
           nome: user.user_metadata.name,
           email: user.email,
           foto_url: user.user_metadata.avatar_url,
@@ -37,23 +37,26 @@ export function useRegistrarUsuario() {
           cadastro_completo: false,
         })
 
-        if (error) console.error('Erro ao criar usuário:', error)
+        if (insertError) {
+          console.error('Erro ao criar usuário:', insertError)
+          setLoading(false)
+          return
+        }
 
-        router.push('/completarcadastro')
+        router.replace('/completarcadastro')
         return
       }
 
       if (!existente.cadastro_completo) {
-        router.push('/completarcadastro')
+        router.replace('/completarcadastro')
         return
       }
 
-      setLoading(false)
+      router.replace('/dashboard')
     }
 
     registrar()
   }, [])
-
 
   return { user, loading }
 }

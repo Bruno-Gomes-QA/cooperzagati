@@ -4,10 +4,12 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 interface Usuario {
+  id: number
   nome: string
   email: string
   foto_url?: string
   papel: string
+  cadastro_completo: boolean
 }
 
 interface AuthContextData {
@@ -25,6 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    setLoading(true)
     const carregarUsuario = async () => {
       const { data: authData } = await supabase.auth.getUser()
       const user = authData?.user

@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@/context/AuthContext'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -34,34 +35,57 @@ export function PessoaForm({ tipo }: Props) {
       ? `${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade}/${endereco.uf}`
       : ''
 
-    const { data: session } = await supabase.auth.getUser()
-    const user = session?.user
+    const { usuario, loading } = useAuth()
 
+    const user = usuario
     if (!user) return alert('Usuário não autenticado')
 
     const updates = {
       cadastro_completo: true,
-      nome: formData.nome_completo || formData.responsavel || user.user_metadata.name,
+      nome: formData.nome_completo || formData.responsavel
     }
-
-    await supabase
-      .from('usuarios')
-      .update(updates)
-      .eq('email', user.email)
-
-    const cadastroData = {
-      usuario_id: user.id,
-      endereco: enderecoCompleto,
-      ...formData,
+    console.log(user)
+    let cadastroData: any = {
+    }
+      if (tipo === 'pf') {
+        cadastroData = {
+          usuario_id: user.id,
+          cpf: formData.cpf,
+          moradores: formData.moradores,
+          material: formData.material,
+          telefone: formData.telefone,
+          receber_dicas: formData.receber_dicas ?? false,
+          endereco: enderecoCompleto,
+        }
+      } else {
+      cadastroData = {
+        ...cadastroData,
+        cnpj: formData.cnpj,
+        responsavel: formData.responsavel,
+        nome_empresa: formData.nome_empresa,
+        email: formData.email,
+        tipo_local: formData.tipo_local,
+        quantidade_semanal: formData.quantidade_semanal,
+        infraestrutura: formData.infraestrutura,
+        dias_preferencia: formData.dias_preferencia,
+        telefone: formData.telefone,
+        quer_parceria: formData.quer_parceria ?? false,
+      }
     }
 
     const table = tipo === 'pf' ? 'cadastro_pf' : 'cadastro_pj'
     const { error } = await supabase.from(table).insert(cadastroData)
 
-    if (!error) router.push('/dashboard')
-    else alert('Erro ao salvar dados!')
+    if (!error) {
+      await supabase
+        .from('usuarios')
+        .update(updates)
+        .eq('email', user.email)
+      router.push('/dashboard')
+    } else {
+      alert('Erro ao salvar dados!')
+    }
   }
-
 
   return (
     <section className="w-full max-w-4xl mx-auto mt-10 bg-[#0a0a0a] border border-green-600 rounded-3xl shadow-2xl p-8 sm:p-10">

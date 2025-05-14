@@ -14,7 +14,9 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading && usuario) {
-      router.push('/completarcadastro')
+      if (!usuario.cadastro_completo) {
+        router.replace('/completarcadastro')
+      }
     }
   }, [loading, usuario])
 

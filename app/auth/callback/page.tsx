@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function AuthCallback() {
-  const { user, loading } = useRegistrarUsuario()
+  const { user,loading } = useRegistrarUsuario()
   const router = useRouter()
 
   useEffect(() => {
