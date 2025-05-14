@@ -7,9 +7,8 @@ interface Usuario {
   id: number
   nome: string
   email: string
-  foto_url?: string
-  papel: string
-  cadastro_completo: boolean
+  photo_url?: string
+  role: string
 }
 
 interface AuthContextData {
@@ -38,13 +37,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      const { data: usuarioDB } = await supabase
-        .from('usuarios')
-        .select('*')
-        .eq('email', user.email)
-        .single()
+      setUsuario({
+        id: user.id,
+        nome: user.user_metadata.name,
+        email: String(user.email),
+        photo_url: user.user_metadata.avatar_url,
+        role: 'usuario', // Default value, feat more roles in future
+      })
 
-      if (usuarioDB) setUsuario(usuarioDB)
       setLoading(false)
     }
 

@@ -3,7 +3,6 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { MaskedInput } from './MaskedInput'
 
 interface Props {
   formData: any
@@ -16,7 +15,13 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
     <>
       <div className="space-y-2">
         <Label htmlFor="nome_completo">Nome completo</Label>
-        <Input name="nome_completo" required onChange={handleChange} className="rounded-md" />
+        <Input
+          name="nome_completo"
+          required
+          value={formData.nome_completo || ''}
+          onChange={handleChange}
+          className="rounded-md"
+        />
       </div>
 
       <div className="space-y-2">
@@ -34,6 +39,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <Label htmlFor="telefone">Telefone para contato</Label>
         <Input
           name="telefone"
+          required
           placeholder="Ex: (11) 91234-5678"
           value={formData.telefone || ''}
           onChange={handleChange}
@@ -45,6 +51,8 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <Label htmlFor="moradores">Quantas pessoas moram com você?</Label>
         <select
           name="moradores"
+          required
+          value={formData.moradores || ''}
           onChange={handleChange}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
@@ -59,6 +67,8 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <Label htmlFor="material">Tipo de material que mais recicla</Label>
         <select
           name="material"
+          required
+          value={formData.material || ''}
           onChange={handleChange}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
@@ -72,6 +82,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
           <option value="Outros">Outros</option>
         </select>
       </div>
+
       <div className="flex items-center gap-2">
         <Checkbox
           id="lembretes"
