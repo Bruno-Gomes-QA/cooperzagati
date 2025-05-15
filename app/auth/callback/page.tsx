@@ -14,12 +14,16 @@ export default function AuthCallback() {
       if (!loading && user) {
         const { data } = await supabase
           .from('user_registration_status')
-          .select('full_registration')
+          .select('full_registration, tipo_usuario')
           .eq('auth_id', user.id)
           .maybeSingle()
 
         if (data?.full_registration) {
-          router.push('/dashboard')
+          if (data.tipo_usuario === 'PJ') {
+            router.push('/dashboard/empresa')
+          } else if (data.tipo_usuario === 'PF') {
+            router.push('/dashboard')
+          }
         } else {
           router.push('/completarcadastro')
         }
