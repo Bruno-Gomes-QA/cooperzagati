@@ -29,7 +29,7 @@ export function MapaRotaColeta({ endereco }: MapaRotaColetaProps) {
   const [duracao, setDuracao] = useState<string | null>(null)
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || '',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
     libraries: ['places']
   })
 
