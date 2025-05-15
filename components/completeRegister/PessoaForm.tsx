@@ -13,7 +13,29 @@ interface Props {
 }
 
 export function PessoaForm({ tipo }: Props) {
-  const [formData, setFormData] = useState<any>({})
+    const initialPF = {
+    nome_completo: '',
+    cpf: '',
+    telefone: '',
+    moradores: '',
+    material: '',
+    receber_dicas: false,
+  }
+
+  const initialPJ = {
+    nome_empresa: '',
+    cnpj: '',
+    responsavel: '',
+    email: '',
+    tipo_local: '',
+    quantidade_semanal: '',
+    infraestrutura: '',
+    dias_preferencia: '',
+    telefone: '',
+    quer_parceria: false,
+  }
+
+  const [formData, setFormData] = useState<any>(tipo === 'pf' ? initialPF : initialPJ)
   const [cep, setCep] = useState('')
   const [endereco, setEndereco] = useState<{
     logradouro: string

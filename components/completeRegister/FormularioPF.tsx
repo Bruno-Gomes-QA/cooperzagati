@@ -3,6 +3,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import { useState } from 'react'
 
 interface Props {
   formData: any
@@ -11,6 +12,25 @@ interface Props {
 }
 
 export function FormularioPF({ formData, setFormData, handleChange }: Props) {
+  const sanitizeInput = (name: string, value: string) => {
+    switch (name) {
+      case 'nome_completo':
+        return value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s]/g, '')
+      case 'cpf':
+        return value.replace(/\D/g, '').slice(0, 11)
+      case 'telefone':
+        return value.replace(/\D/g, '').slice(0, 11)
+      default:
+        return value
+    }
+  }
+
+  const handleSanitizedChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    const sanitized = sanitizeInput(name, value)
+    setFormData((prev: any) => ({ ...prev, [name]: sanitized }))
+  }
+
   return (
     <>
       <div className="space-y-2">
@@ -19,7 +39,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
           name="nome_completo"
           required
           value={formData.nome_completo || ''}
-          onChange={handleChange}
+          onChange={handleSanitizedChange}
           className="rounded-md"
         />
       </div>
@@ -28,9 +48,9 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <Label htmlFor="cpf">CPF (opcional)</Label>
         <Input
           name="cpf"
-          placeholder="Ex: 123.456.789-00"
+          placeholder="Ex: 12345678900"
           value={formData.cpf || ''}
-          onChange={handleChange}
+          onChange={handleSanitizedChange}
           className="rounded-md"
         />
       </div>
@@ -40,9 +60,9 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <Input
           name="telefone"
           required
-          placeholder="Ex: (11) 91234-5678"
+          placeholder="Ex: 11912345678"
           value={formData.telefone || ''}
-          onChange={handleChange}
+          onChange={handleSanitizedChange}
           className="rounded-md"
         />
       </div>
@@ -57,14 +77,14 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
           <option value="">Selecione...</option>
-          <option value="1-3">1 à 3 pessoa</option>
+          <option value="1-3">1 à 3 pessoas</option>
           <option value="4-6">4 à 6 pessoas</option>
           <option value="7+">7 ou mais</option>
         </select>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="material">Tipo de material que mais recicla</Label>
+        <Label htmlFor="material">Tipo de material que mais recicla?</Label>
         <select
           name="material"
           required

@@ -3,6 +3,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import { useState } from 'react'
 
 interface Props {
   formData: any
@@ -11,26 +12,73 @@ interface Props {
 }
 
 export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
+  const sanitizeInput = (name: string, value: string) => {
+    switch (name) {
+      case 'nome_empresa':
+      case 'responsavel':
+        return value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s]/g, '')
+      case 'cnpj':
+        return value.replace(/\D/g, '').slice(0, 14)
+      case 'telefone':
+        return value.replace(/\D/g, '').slice(0, 11)
+      default:
+        return value
+    }
+  }
+
+  const handleSanitizedChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    const sanitized = sanitizeInput(name, value)
+    setFormData((prev: any) => ({ ...prev, [name]: sanitized }))
+  }
+
   return (
     <>
       <div className="space-y-2">
         <Label htmlFor="nome_empresa">Nome da organização</Label>
-        <Input name="nome_empresa" required placeholder="Ex: Padaria Dois Irmãos" onChange={handleChange} className="rounded-md" />
+        <Input
+          name="nome_empresa"
+          required
+          placeholder="Ex: Padaria Dois Irmãos"
+          onChange={handleSanitizedChange}
+          value={formData.nome_empresa || ''}
+          className="rounded-md"
+        />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="cnpj">CNPJ (Opcional)</Label>
-        <Input name="cnpj" placeholder="Ex: 12.345.678/0001-90" onChange={handleChange} className="rounded-md" />
+        <Input
+          name="cnpj"
+          placeholder="Ex: 12345678000190"
+          onChange={handleSanitizedChange}
+          value={formData.cnpj || ''}
+          className="rounded-md"
+        />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="responsavel">Nome do responsável</Label>
-        <Input name="responsavel" required placeholder="Ex: João da Silva" onChange={handleChange} className="rounded-md" />
+        <Input
+          name="responsavel"
+          required
+          placeholder="Ex: João da Silva"
+          onChange={handleSanitizedChange}
+          value={formData.responsavel || ''}
+          className="rounded-md"
+        />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="email">E-mail corporativo</Label>
-        <Input name="email" required placeholder="contato@empresa.com.br" onChange={handleChange} className="rounded-md" />
+        <Input
+          name="email"
+          required
+          placeholder="contato@empresa.com.br"
+          onChange={handleChange}
+          value={formData.email || ''}
+          className="rounded-md"
+        />
       </div>
 
       <div className="space-y-2">
@@ -39,6 +87,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
           name="tipo_local"
           required
           onChange={handleChange}
+          value={formData.tipo_local || ''}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
           <option value="">Selecione...</option>
@@ -57,6 +106,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
           name="quantidade_semanal"
           required
           onChange={handleChange}
+          value={formData.quantidade_semanal || ''}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
           <option value="">Selecione...</option>
@@ -74,6 +124,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
           required
           placeholder="Ex: contêiner, gaiola, sacos de lixo reforçados..."
           onChange={handleChange}
+          value={formData.infraestrutura || ''}
           className="rounded-md"
         />
       </div>
@@ -84,6 +135,7 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
           name="dias_preferencia"
           required
           onChange={handleChange}
+          value={formData.dias_preferencia || ''}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
           <option value="">Selecione...</option>
@@ -96,7 +148,14 @@ export function FormularioPJ({ formData, setFormData, handleChange }: Props) {
 
       <div className="space-y-2">
         <Label htmlFor="telefone">Telefone para contato</Label>
-        <Input name="telefone" required placeholder="Ex: (11) 91234-5678" onChange={handleChange} className="rounded-md" />
+        <Input
+          name="telefone"
+          required
+          placeholder="Ex: (11) 91234-5678"
+          onChange={handleSanitizedChange}
+          value={formData.telefone || ''}
+          className="rounded-md"
+        />
       </div>
 
       <div className="flex items-center gap-2">
