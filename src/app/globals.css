@@ -44,9 +44,10 @@
 }
 
 :root {
+  --radius: 0.6rem;
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
+  --card: #0a0a0a;
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
@@ -111,6 +112,15 @@
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.723 0.219 149.579);
 
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50 rounded-lg;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 @layer base {
