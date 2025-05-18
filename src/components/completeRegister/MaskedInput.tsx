@@ -1,16 +1,19 @@
 import InputMask from 'react-input-mask'
-import { ChangeEvent, JSX } from 'react'
+import { Input } from '@/components/ui/input'
+import { InputHTMLAttributes } from 'react'
 
-interface MaskedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'mask'> {
+interface MaskedInputProps extends InputHTMLAttributes<HTMLInputElement> {
   mask: string
   value: string
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export function MaskedInput({ mask, value, onChange, ...props }: MaskedInputProps): JSX.Element {
+export function MaskedInput({ mask, value, onChange, ...props }: MaskedInputProps) {
   return (
-    <InputMask mask={mask} value={value} onChange={onChange} {...props}>
-      {(inputProps: any) => <input {...inputProps} />}
+    <InputMask mask={mask} value={value} onChange={onChange}>
+      {(inputProps: InputHTMLAttributes<HTMLInputElement>) => (
+        <Input {...inputProps} {...props} />
+      )}
     </InputMask>
   )
 }
