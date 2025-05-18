@@ -12,8 +12,37 @@ interface Props {
   tipo: 'pf' | 'pj'
 }
 
+interface Endereco {
+  logradouro: string
+  bairro: string
+  localidade: string
+  uf: string
+}
+
+interface FormDataPF {
+  nome_completo: string
+  cpf: string
+  telefone: string
+  moradores: string
+  material: string
+  receber_dicas: boolean
+}
+
+interface FormDataPJ {
+  nome_empresa: string
+  cnpj: string
+  responsavel: string
+  email: string
+  tipo_local: string
+  quantidade_semanal: string
+  infraestrutura: string
+  dias_preferencia: string
+  telefone: string
+  quer_parceria: boolean
+}
+
 export function PessoaForm({ tipo }: Props) {
-    const initialPF = {
+  const initialPF: FormDataPF = {
     nome_completo: '',
     cpf: '',
     telefone: '',
@@ -22,7 +51,7 @@ export function PessoaForm({ tipo }: Props) {
     receber_dicas: false,
   }
 
-  const initialPJ = {
+  const initialPJ: FormDataPJ = {
     nome_empresa: '',
     cnpj: '',
     responsavel: '',
@@ -35,22 +64,22 @@ export function PessoaForm({ tipo }: Props) {
     quer_parceria: false,
   }
 
-  const [formData, setFormData] = useState<any>(tipo === 'pf' ? initialPF : initialPJ)
+  const [formDataPF, setFormDataPF] = useState<FormDataPF>(initialPF)
+  const [formDataPJ, setFormDataPJ] = useState<FormDataPJ>(initialPJ)
   const [cep, setCep] = useState('')
-  const [endereco, setEndereco] = useState<{
-    logradouro: string
-    bairro: string
-    localidade: string
-    uf: string
-  } | null>(null)
+  const [endereco, setEndereco] = useState<Endereco | null>(null)
   const [emCasa, setEmCasa] = useState<null | boolean>(null)
   const router = useRouter()
-
   const { usuario } = useAuth()
   if (!usuario) return null
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    if (tipo === 'pf') {
+      setFormDataPF(prev => ({ ...prev, [name]: value }))
+    } else {
+      setFormDataPJ(prev => ({ ...prev, [name]: value }))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,43 +88,38 @@ export function PessoaForm({ tipo }: Props) {
       alert('Por favor, preencha o endereço antes de finalizar o cadastro.')
       return
     }
-    const enderecoCompleto = endereco
-      ? `${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade}/${endereco.uf}`
-      : ''
 
+    const enderecoCompleto = `${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade}/${endereco.uf}`
     const authId = usuario.id
-    let cadastroData: any = {}
 
-    console.log('Dados do formulário:', usuario)
-    if (tipo === 'pf') {
-      cadastroData = {
-        auth_id: authId,
-        full_name: formData.nome_completo,
-        cpf: formData.cpf,
-        phone: formData.telefone,
-        household_size: formData.moradores,
-        main_recycled_material: formData.material,
-        wants_tips: formData.receber_dicas ?? false,
-        address: enderecoCompleto,
-        full_registration: true,
-      }
-    } else {
-      cadastroData = {
-        auth_id: authId,
-        organization_name: formData.nome_empresa,
-        cnpj: formData.cnpj,
-        contact_person: formData.responsavel,
-        email: formData.email,
-        location_type: formData.tipo_local,
-        weekly_waste_amount: formData.quantidade_semanal,
-        collection_infrastructure: formData.infraestrutura,
-        preferred_days: formData.dias_preferencia,
-        phone: formData.telefone,
-        interested_in_partnership: formData.quer_parceria ?? false,
-        address: enderecoCompleto,
-        full_registration: true,
-      }
-    }
+    const cadastroData =
+      tipo === 'pf'
+        ? {
+            auth_id: authId,
+            full_name: formDataPF.nome_completo,
+            cpf: formDataPF.cpf,
+            phone: formDataPF.telefone,
+            household_size: formDataPF.moradores,
+            main_recycled_material: formDataPF.material,
+            wants_tips: formDataPF.receber_dicas,
+            address: enderecoCompleto,
+            full_registration: true,
+          }
+        : {
+            auth_id: authId,
+            organization_name: formDataPJ.nome_empresa,
+            cnpj: formDataPJ.cnpj,
+            contact_person: formDataPJ.responsavel,
+            email: formDataPJ.email,
+            location_type: formDataPJ.tipo_local,
+            weekly_waste_amount: formDataPJ.quantidade_semanal,
+            collection_infrastructure: formDataPJ.infraestrutura,
+            preferred_days: formDataPJ.dias_preferencia,
+            phone: formDataPJ.telefone,
+            interested_in_partnership: formDataPJ.quer_parceria,
+            address: enderecoCompleto,
+            full_registration: true,
+          }
 
     const table = tipo === 'pf' ? 'individual_users' : 'organization_users'
     const { error } = await supabase.from(table).insert(cadastroData)
@@ -104,7 +128,7 @@ export function PessoaForm({ tipo }: Props) {
       console.error(error)
       alert('Erro ao salvar dados!')
     } else {
-      router.push('/dashboard')
+      router.push(tipo === 'pf' ? '/dashboard' : '/dashboard-pj')
     }
   }
 
@@ -116,9 +140,17 @@ export function PessoaForm({ tipo }: Props) {
         </h2>
 
         {tipo === 'pf' ? (
-          <FormularioPF formData={formData} setFormData={setFormData} handleChange={handleChange} />
+          <FormularioPF
+            formData={formDataPF}
+            setFormData={setFormDataPF}
+            handleChange={handleChange}
+          />
         ) : (
-          <FormularioPJ formData={formData} setFormData={setFormData} handleChange={handleChange} />
+          <FormularioPJ
+            formData={formDataPJ}
+            setFormData={setFormDataPJ}
+            handleChange={handleChange}
+          />
         )}
 
         <EnderecoInput
@@ -131,7 +163,10 @@ export function PessoaForm({ tipo }: Props) {
         />
 
         <div className="pt-4">
-          <button type="submit" className="rounded-full bg-green-600 hover:bg-green-700 px-6 py-2">
+          <button
+            type="submit"
+            className="rounded-full bg-green-600 hover:bg-green-700 px-6 py-2"
+          >
             Finalizar Cadastro
           </button>
         </div>

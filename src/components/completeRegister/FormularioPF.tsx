@@ -3,11 +3,19 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { useState } from 'react'
+
+interface FormDataPF {
+  nome_completo: string
+  cpf: string
+  telefone: string
+  moradores: string
+  material: string
+  receber_dicas: boolean
+}
 
 interface Props {
-  formData: any
-  setFormData: any
+  formData: FormDataPF
+  setFormData: React.Dispatch<React.SetStateAction<FormDataPF>>
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
 }
 
@@ -28,7 +36,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
   const handleSanitizedChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     const sanitized = sanitizeInput(name, value)
-    setFormData((prev: any) => ({ ...prev, [name]: sanitized }))
+    setFormData((prev) => ({ ...prev, [name]: sanitized }))
   }
 
   return (
@@ -38,7 +46,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <Input
           name="nome_completo"
           required
-          value={formData.nome_completo || ''}
+          value={formData.nome_completo}
           onChange={handleSanitizedChange}
           className="rounded-md"
         />
@@ -49,7 +57,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <Input
           name="cpf"
           placeholder="Ex: 12345678900"
-          value={formData.cpf || ''}
+          value={formData.cpf}
           onChange={handleSanitizedChange}
           className="rounded-md"
         />
@@ -61,7 +69,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
           name="telefone"
           required
           placeholder="Ex: 11912345678"
-          value={formData.telefone || ''}
+          value={formData.telefone}
           onChange={handleSanitizedChange}
           className="rounded-md"
         />
@@ -72,7 +80,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <select
           name="moradores"
           required
-          value={formData.moradores || ''}
+          value={formData.moradores}
           onChange={handleChange}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
@@ -88,7 +96,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <select
           name="material"
           required
-          value={formData.material || ''}
+          value={formData.material}
           onChange={handleChange}
           className="bg-black border border-white/20 text-white rounded-md px-4 py-2 w-full"
         >
@@ -107,7 +115,7 @@ export function FormularioPF({ formData, setFormData, handleChange }: Props) {
         <Checkbox
           id="lembretes"
           onCheckedChange={(checked) =>
-            setFormData((prev: any) => ({ ...prev, receber_dicas: !!checked }))
+            setFormData((prev) => ({ ...prev, receber_dicas: !!checked }))
           }
         />
         <Label htmlFor="lembretes">Deseja receber lembretes ou dicas?</Label>

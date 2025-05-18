@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   GoogleMap,
-  DirectionsRenderer,
   useJsApiLoader
 } from '@react-google-maps/api'
 import { CarFront, Timer } from 'lucide-react'
