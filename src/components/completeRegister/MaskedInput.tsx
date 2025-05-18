@@ -8,5 +8,9 @@ interface MaskedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
 }
 
 export function MaskedInput({ mask, value, onChange, ...props }: MaskedInputProps): JSX.Element {
-  return <InputMask mask={mask} value={value} onChange={onChange} {...props} />
+  return (
+    <InputMask mask={mask} value={value} onChange={onChange} {...props}>
+      {(inputProps: any) => <input {...inputProps} />}
+    </InputMask>
+  )
 }
