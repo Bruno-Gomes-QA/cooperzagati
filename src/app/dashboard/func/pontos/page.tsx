@@ -13,12 +13,12 @@ import type { PontoColeta } from '@/types'
 export default function PontosPage() {
   const [search, setSearch] = useState('')
   const [showForm, setShowForm] = useState(false)
-  const [pontoParaEditar, setPontoParaEditar] = useState<PontoColeta | null>(null)
+  const [pontoParaEditar, setPontoParaEditar] = useState<PontoColeta | undefined>(undefined)
   const { pontos, loading, refetch } = usePontosColeta(search)
 
   const handleFecharForm = () => {
     setShowForm(false)
-    setPontoParaEditar(null)
+    setPontoParaEditar(undefined)
     refetch()
   }
 
