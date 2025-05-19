@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Plus, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { MapPin } from 'lucide-react'
 
 export function PontosHeader({ onSearch, onCreate }: { onSearch: (value: string) => void, onCreate: () => void }) {

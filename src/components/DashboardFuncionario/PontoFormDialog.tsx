@@ -11,17 +11,20 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { supabase } from '@/lib/supabase'
+import type { PontoColeta } from '@/types'
 
 interface Props {
   open: boolean
   onClose: () => void
-  pontoParaEditar?: any
+  pontoParaEditar?: PontoColeta
 }
 
 export function PontoFormDialog({ open, onClose, pontoParaEditar }: Props) {
   const isEdicao = !!pontoParaEditar
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<PontoColeta, 'id' | 'created_by' | 'capacity_kg'> & {
+    capacity_kg: string
+  }>({
     name: '',
     address: '',
     number: '',

@@ -20,18 +20,19 @@ import { Trash, Pencil, Eye, MapPin } from 'lucide-react'
 import { VisualizarPontoDialog } from './VisualizarPontoDialog'
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import type { PontoColeta } from '@/types'
 
 interface Props {
-  pontos: any[]
-  onEdit: (ponto: any) => void
+  pontos: PontoColeta[]
+  onEdit: (ponto: PontoColeta) => void
   refetch: () => void
 }
 
 export function PontoTable({ pontos, onEdit, refetch }: Props) {
-  const [pontoParaExcluir, setPontoParaExcluir] = useState<any | null>(null)
+  const [pontoParaExcluir, setPontoParaExcluir] = useState<PontoColeta | null>(null)
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
 
-  const handleConfirmDelete = (ponto: any) => {
+  const handleConfirmDelete = (ponto: PontoColeta) => {
     setPontoParaExcluir(ponto)
     setConfirmDialogOpen(true)
   }
@@ -131,7 +132,6 @@ export function PontoTable({ pontos, onEdit, refetch }: Props) {
         </div>
       </div>
 
-      {/* Modal de confirmação */}
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent>
           <DialogTitle>Confirmar exclusão</DialogTitle>

@@ -9,9 +9,10 @@ import {
 } from '@/components/ui/dialog'
 import { Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import type { PontoColeta } from '@/types'
 
 interface Props {
-  ponto: any
+  ponto: PontoColeta
 }
 
 export function VisualizarPontoDialog({ ponto }: Props) {
@@ -47,7 +48,11 @@ export function VisualizarPontoDialog({ ponto }: Props) {
           <Campo label="Observações" valor={ponto.notes} />
           <Campo
             label="Criado em"
-            valor={new Date(ponto.created_at).toLocaleDateString('pt-BR')}
+            valor={
+              ponto.created_at
+                ? new Date(ponto.created_at).toLocaleDateString('pt-BR')
+                : '-'
+            }
           />
         </div>
       </DialogContent>
@@ -55,11 +60,11 @@ export function VisualizarPontoDialog({ ponto }: Props) {
   )
 }
 
-function Campo({ label, valor }: { label: string; valor: any }) {
+function Campo({ label, valor }: { label: string; valor: string | number | null | undefined }) {
   return (
     <div>
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="text-sm">{valor || '-'}</p>
+      <p className="text-sm">{valor ?? '-'}</p>
     </div>
   )
 }

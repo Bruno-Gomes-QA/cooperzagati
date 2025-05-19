@@ -8,11 +8,12 @@ import { PontoFormDialog } from '@/components/DashboardFuncionario/PontoFormDial
 import { Button } from '@/components/ui/button'
 import { MapPin } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
+import type { PontoColeta } from '@/types'
 
 export default function PontosPage() {
   const [search, setSearch] = useState('')
   const [showForm, setShowForm] = useState(false)
-  const [pontoParaEditar, setPontoParaEditar] = useState<any>(null)
+  const [pontoParaEditar, setPontoParaEditar] = useState<PontoColeta | null>(null)
   const { pontos, loading, refetch } = usePontosColeta(search)
 
   const handleFecharForm = () => {
@@ -43,7 +44,7 @@ export default function PontosPage() {
         {loading ? (
           <p className="text-white">Carregando...</p>
         ) : pontos.length === 0 ? (
-          <EmptyState message='Nenhum ponto de coleta encontrado'></EmptyState>
+          <EmptyState message="Nenhum ponto de coleta encontrado" />
         ) : (
           <PontoTable
             pontos={pontos}

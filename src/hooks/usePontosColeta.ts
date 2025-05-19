@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import type { PontoColeta } from '@/types'
 
 export function usePontosColeta(search: string) {
-  const [pontos, setPontos] = useState<any[]>([])
+  const [pontos, setPontos] = useState<PontoColeta[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchData = useCallback(async () => {
@@ -21,8 +22,8 @@ export function usePontosColeta(search: string) {
 
     const { data, error } = await query
 
-    if (!error) {
-      setPontos(data || [])
+    if (!error && data) {
+      setPontos(data as PontoColeta[])
     }
 
     setLoading(false)
