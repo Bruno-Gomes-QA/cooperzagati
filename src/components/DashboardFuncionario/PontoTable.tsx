@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
-import { Trash, Pencil, Eye, MapPin } from 'lucide-react'
+import { Trash, Pencil, MapPin } from 'lucide-react'
 import { VisualizarPontoDialog } from './VisualizarPontoDialog'
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -60,7 +60,7 @@ export function PontoTable({ pontos, onEdit, refetch }: Props) {
         <div className="w-full border border-green-700">
           <Table
             className="w-full text-white"
-            style={{ ['--radius' as any]: '0px' }}
+            style={{ '--radius': '0px' } as React.CSSProperties }
           >
             <TableHeader className="bg-green-800">
               <TableRow>
