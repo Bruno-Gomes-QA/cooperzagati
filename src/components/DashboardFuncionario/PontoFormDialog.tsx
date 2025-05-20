@@ -119,7 +119,7 @@ export function PontoFormDialog({ open, onClose, pontoParaEditar }: Props) {
     const payload = {
       ...formData,
       capacity_kg: Number(formData.capacity_kg),
-      ...(isEdicao ? {} : { created_by: user.id }), // apenas no insert
+      ...(isEdicao ? {} : { created_by: user.id }),
     }
 
     const { error } = isEdicao

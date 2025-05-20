@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
 } from '@/components/ui/sidebar'
 import { usePathname } from 'next/navigation'
-import { Home, MapPin, Route, LogOut } from 'lucide-react'
+import { Home, MapPin, Route, LogOut, Truck } from 'lucide-react'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
@@ -81,6 +81,20 @@ export function AppSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
+
+          <SidebarMenuItem>
+          <SidebarMenuButton
+            asChild
+            className={clsx(
+              isActive('/dashboard/func/caminhoes') && 'text-green-500 font-semibold'
+            )}
+          >
+            <Link href="/dashboard/func/caminhoes">
+              <Truck className="mr-2 h-4 w-4" />
+              Caminhões
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
 

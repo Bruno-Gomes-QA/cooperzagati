@@ -13,3 +13,12 @@ export interface PontoColeta {
   created_by?: string
   created_at?: string
 }
+
+export interface Trucks {
+  id?: string
+  name: string
+  plate: string
+  capacity_kg: number
+  notes?: string
+  created_at?: string
+}
