@@ -85,9 +85,10 @@ export default function RotasPage() {
       const data = JSON.parse(raw)
       setRota(data.rota)
       setResumo(data.resumo)
-    } catch (err: any) {
-      console.error('Erro na rota:', err)
-      setErro(err.message || 'Erro desconhecido')
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Erro desconhecido')
+      console.error('Erro na rota:', error)
+      setErro(error.message)
     } finally {
       setGerandoRota(false)
     }
