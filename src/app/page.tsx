@@ -24,7 +24,7 @@ export default function Home() {
           .maybeSingle()
 
         if (!data?.full_registration) {
-          router.replace('/completarcadastro')
+          router.replace('/dashboard')
         } else {
           setVerificado(true)
         }

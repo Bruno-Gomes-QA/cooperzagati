@@ -14,7 +14,7 @@ export default function AuthCallback() {
       if (!user || loading) return
 
       const email = user.email || ''
-      const isFuncionario = email.endsWith('@a.fecaf.com.br')
+      const isFuncionario = email.endsWith('fecaf.com.br')
 
       if (isFuncionario) {
         await supabase

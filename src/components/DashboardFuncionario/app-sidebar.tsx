@@ -19,7 +19,7 @@ import clsx from 'clsx'
 export function AppSidebar() {
   const pathname = usePathname()
 
-  const isActive = (route: string) => pathname.startsWith(route)
+  const isActive = (route: string) => pathname === route
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -34,6 +34,7 @@ export function AppSidebar() {
           alt="Cooperzagati"
           width={160}
           height={40}
+          unoptimized
           className="object-contain"
         />
       </SidebarHeader>
@@ -43,9 +44,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className={clsx(
-                isActive('/dashboard/func') && !isActive('/dashboard/func/pontos') && !isActive('/dashboard/func/rotas') && 'text-green-500 font-semibold'
-              )}
+              className={clsx(isActive('/dashboard/func') && 'text-green-500 font-semibold')}
             >
               <Link href="/dashboard/func">
                 <Home className="mr-2 h-4 w-4" />
@@ -57,9 +56,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className={clsx(
-                isActive('/dashboard/func/pontos') && 'text-green-500 font-semibold'
-              )}
+              className={clsx(isActive('/dashboard/func/pontos') && 'text-green-500 font-semibold')}
             >
               <Link href="/dashboard/func/pontos">
                 <MapPin className="mr-2 h-4 w-4" />
@@ -71,9 +68,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className={clsx(
-                isActive('/dashboard/func/rotas') && 'text-green-500 font-semibold'
-              )}
+              className={clsx(isActive('/dashboard/func/rotas') && 'text-green-500 font-semibold')}
             >
               <Link href="/dashboard/func/rotas">
                 <Route className="mr-2 h-4 w-4" />
@@ -83,18 +78,16 @@ export function AppSidebar() {
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-          <SidebarMenuButton
-            asChild
-            className={clsx(
-              isActive('/dashboard/func/caminhoes') && 'text-green-500 font-semibold'
-            )}
-          >
-            <Link href="/dashboard/func/caminhoes">
-              <Truck className="mr-2 h-4 w-4" />
-              Caminhões
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className={clsx(isActive('/dashboard/func/caminhoes') && 'text-green-500 font-semibold')}
+            >
+              <Link href="/dashboard/func/caminhoes">
+                <Truck className="mr-2 h-4 w-4" />
+                Caminhões
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
 

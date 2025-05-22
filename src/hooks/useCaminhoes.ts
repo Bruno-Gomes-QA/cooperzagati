@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
-import type { Truck } from '@/types'
+import type { Trucks } from '@/types'
 
 export function useCaminhoes(search: string = '') {
-  const [trucks, setTrucks] = useState<Truck[]>([])
+  const [trucks, setTrucks] = useState<Trucks[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchData = useCallback(async () => {
@@ -23,7 +23,7 @@ export function useCaminhoes(search: string = '') {
     const { data, error } = await query
 
     if (!error && data) {
-      setTrucks(data as Truck[])
+      setTrucks(data as Trucks[])
     }
 
     setLoading(false)
