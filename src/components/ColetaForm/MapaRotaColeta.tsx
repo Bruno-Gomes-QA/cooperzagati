@@ -66,7 +66,7 @@ export function MapaRotaColeta({ endereco }: MapaRotaColetaProps) {
       const address = `${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade}, ${endereco.uf}`
       const geocoder = new google.maps.Geocoder()
       geocoder.geocode({ address }, (results, status) => {
-        if (status === 'OK' && results[0]?.geometry.location) {
+        if (status === 'OK' && results && results[0]?.geometry.location) {
           const location = results[0].geometry.location
           const latLng = { lat: location.lat(), lng: location.lng() }
           setUserLocation(latLng)
@@ -147,7 +147,7 @@ export function MapaRotaColeta({ endereco }: MapaRotaColetaProps) {
             mapTypeControl: false,
             streetViewControl: false,
           }}
-          onLoad={(map) => (mapRef.current = map)}
+          onLoad={(map) => { mapRef.current = map; }}
         >
           <Marker position={userLocation} label="Você" />
           {pontos.map((p, i) => (
