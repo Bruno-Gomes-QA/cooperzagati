@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   GoogleMap,
-  useJsApiLoader
+  useJsApiLoader,
+  Marker,
+  DirectionsRenderer,
 } from '@react-google-maps/api'
 import { CarFront, Timer } from 'lucide-react'
 
@@ -14,54 +16,112 @@ interface Endereco {
   uf: string
 }
 
+interface PontoColeta {
+  nome: string
+  endereco: string
+  lat: number
+  lng: number
+}
+
 interface MapaRotaColetaProps {
   endereco: Endereco
 }
 
 export function MapaRotaColeta({ endereco }: MapaRotaColetaProps) {
   const mapRef = useRef<google.maps.Map | null>(null)
-  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(
-    null
-  )
-
   const [distancia, setDistancia] = useState<string | null>(null)
   const [duracao, setDuracao] = useState<string | null>(null)
+  const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [pontoMaisProximo, setPontoMaisProximo] = useState<PontoColeta | null>(null)
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places']
+    libraries: ['places', 'geometry'],
   })
 
+  const pontos: PontoColeta[] = [
+    {
+      nome: 'Cooperativa Principal',
+      endereco: 'R. Porfírio Herdeiro, 440 - Parque Industrial das Oliveiras, Taboão da Serra - SP, 06765-480',
+      lat: -23.6214828,
+      lng: -46.7771148,
+    },
+    {
+      nome: 'Eco ponto - Estr. das Olarias',
+      endereco: 'Eco ponto - Estr. das Olarias, 980 - Jardim Triangulo, Taboão da Serra - SP, 06775-005',
+      lat: -23.6338895,
+      lng: -46.7920879,
+    },
+    {
+      nome: 'Eco ponto - R. José Milani',
+      endereco: 'R. José Milani, 275 - Jardim Irapua, Taboão da Serra - SP, 06766-420',
+      lat: -23.6235937,
+      lng: -46.7795843,
+    },
+  ]
+
   useEffect(() => {
-    if (isLoaded && endereco) {
-      const origin = `${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade}, ${endereco.uf}`
-      const destination =
-        'R. Porfírio Herdeiro, 440 - Parque Industrial das Oliveiras, Taboão da Serra - SP, 06765-480'
-
-      const directionsService = new google.maps.DirectionsService()
-
-      directionsService.route(
-        {
-          origin,
-          destination,
-          travelMode: google.maps.TravelMode.DRIVING
-        },
-        (result, status) => {
-          if (result && status === google.maps.DirectionsStatus.OK && directionsRendererRef.current) {
-            directionsRendererRef.current.setDirections(result)
-
-            const leg = result.routes[0]?.legs[0]
-            if (leg) {
-              setDistancia(leg.distance?.text || null)
-              setDuracao(leg.duration?.text || null)
-            }
-          }
+    const geocodeEndereco = async () => {
+      const address = `${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade}, ${endereco.uf}`
+      const geocoder = new google.maps.Geocoder()
+      geocoder.geocode({ address }, (results, status) => {
+        if (status === 'OK' && results[0]?.geometry.location) {
+          const location = results[0].geometry.location
+          const latLng = { lat: location.lat(), lng: location.lng() }
+          setUserLocation(latLng)
         }
-      )
+      })
     }
-  }, [isLoaded, endereco])
+    if (isLoaded) geocodeEndereco()
+  }, [endereco, isLoaded])
 
-  return isLoaded ? (
+  useEffect(() => {
+    const calcularDistancia = async () => {
+      if (!userLocation) return
+
+      const distances: {
+        ponto: PontoColeta
+        distancia: number
+        duracao: string
+        rota: google.maps.DirectionsResult
+      }[] = []
+
+      for (const ponto of pontos) {
+        const directionsService = new google.maps.DirectionsService()
+        try {
+          const result = await directionsService.route({
+            origin: userLocation,
+            destination: { lat: ponto.lat, lng: ponto.lng },
+            travelMode: google.maps.TravelMode.DRIVING,
+          })
+
+          const leg = result.routes[0]?.legs[0]
+          if (leg) {
+            distances.push({
+              ponto,
+              distancia: leg.distance?.value || Infinity,
+              duracao: leg.duration?.text || '',
+              rota: result,
+            })
+          }
+        } catch (err) {
+          console.error('Erro ao calcular rota:', err)
+        }
+      }
+
+      const maisProximo = distances.sort((a, b) => a.distancia - b.distancia)[0]
+      if (maisProximo) {
+        setPontoMaisProximo(maisProximo.ponto)
+        setDistancia(maisProximo.rota.routes[0]?.legs[0].distance?.text || null)
+        setDuracao(maisProximo.rota.routes[0]?.legs[0].duration?.text || null)
+        setDirections(maisProximo.rota)
+      }
+    }
+    if (userLocation && isLoaded) calcularDistancia()
+  }, [userLocation, isLoaded])
+
+  return isLoaded && userLocation && pontoMaisProximo ? (
     <div className="mt-10 w-full">
       {distancia && duracao && (
         <div className="flex items-center justify-center gap-6 text-green-400 mb-4">
@@ -78,21 +138,23 @@ export function MapaRotaColeta({ endereco }: MapaRotaColetaProps) {
 
       <div className="aspect-[16/9] rounded-xl overflow-hidden border border-green-600 shadow-lg">
         <GoogleMap
-          center={{ lat: -23.6261, lng: -46.7912 }}
-          zoom={14}
+          center={userLocation}
+          zoom={13}
+          mapContainerStyle={{ width: '100%', height: '100%' }}
           options={{
             gestureHandling: 'greedy',
             fullscreenControl: false,
             mapTypeControl: false,
-            streetViewControl: false
+            streetViewControl: false,
           }}
-          mapContainerStyle={{ width: '100%', height: '100%' }}
-          onLoad={(map) => {
-            mapRef.current = map
-            directionsRendererRef.current = new google.maps.DirectionsRenderer()
-            directionsRendererRef.current.setMap(map)
-          }}
-        />
+          onLoad={(map) => (mapRef.current = map)}
+        >
+          <Marker position={userLocation} label="Você" />
+          {pontos.map((p, i) => (
+            <Marker key={i} position={{ lat: p.lat, lng: p.lng }} label={p.nome} />
+          ))}
+          {directions && <DirectionsRenderer directions={directions} />}
+        </GoogleMap>
       </div>
     </div>
   ) : null

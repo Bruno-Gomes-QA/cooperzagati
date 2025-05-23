@@ -11,18 +11,26 @@ import { supabase } from '@/lib/supabase'
 import { Truck, MapPin, Ban, DollarSign, Thermometer, ArrowLeftRight, Clock, Fuel, AlertTriangle } from 'lucide-react'
 
 interface RotaResumo {
+  quantidade_viagens: number
   material_total_kg: number
   distancia_total_km: number
   tempo_estimado_min: number
   litros_estimados: number
   custo_estimado_reais: number
+  capacidade_kg: number
+  caminhao_id: string
   capacidade_utilizada_percent: number
   pontos_nao_visitados: string[] | null
 }
 
-interface RotaPonto {
-  ponto_id: string
-  material_estimado_kg: number
+interface Viagem {
+  ordem: number
+  pontos_visitados: {
+    id: string
+    coletado_kg: number
+    distancia_km: number
+    duracao_min: number
+  }[]
   distancia_km: number
   duracao_min: number
   retorno: boolean
@@ -35,7 +43,7 @@ export default function RotasPage() {
   const { trucks } = useCaminhoes()
   const [pontoSelecionados, setPontoSelecionados] = useState<string[]>([])
   const [caminhaoId, setCaminhaoId] = useState<string>('')
-  const [rota, setRota] = useState<RotaPonto[]>([])
+  const [viagens, setViagens] = useState<Viagem[]>([])
   const [resumo, setResumo] = useState<RotaResumo | null>(null)
   const [gerandoRota, setGerandoRota] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -64,7 +72,6 @@ export default function RotasPage() {
   }
 
   const gerarRota = async () => {
-    console.log('Gerando rota com:', { caminhaoId, pontoSelecionados })
     if (!caminhaoId || pontoSelecionados.length === 0) return
     setGerandoRota(true)
     setErro(null)
@@ -83,7 +90,7 @@ export default function RotasPage() {
       const raw = await res.text()
       if (!res.ok) throw new Error('Erro HTTP: ' + res.status)
       const data = JSON.parse(raw)
-      setRota(data.rota)
+      setViagens(data.viagens)
       setResumo(data.resumo)
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Erro desconhecido')
@@ -95,7 +102,7 @@ export default function RotasPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="min-h-screen w-full space-y-6">
       <h1 className="text-2xl font-bold text-green-500">Gerar Rota</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -119,7 +126,7 @@ export default function RotasPage() {
             </div>
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" className="border-green-500 text-green-400">Adicionar Pontos</Button>
+                <Button variant="outline" className="border-green-500 text-green-400">Selecionar Pontos</Button>
               </DialogTrigger>
               <DialogContent className="max-h-[80vh] min-w-[100vh] overflow-y-auto space-y-2">
                 <Card>
@@ -216,9 +223,7 @@ export default function RotasPage() {
         {gerandoRota ? 'Gerando rota...' : 'Gerar Rota'}
       </Button>
 
-      {erro && (
-        <p className="text-red-500 font-medium">Erro: {erro}</p>
-      )}
+      {erro && <p className="text-red-500 font-medium">Erro: {erro}</p>}
 
       {resumo && (
         <Card className="mt-6 border border-green-500">
@@ -226,6 +231,9 @@ export default function RotasPage() {
             <CardTitle className="text-green-500">Resumo da Rota</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex items-center gap-2 text-white">
+              <Truck className="w-5 h-5 text-green-400" /> {resumo.quantidade_viagens} viagem(ns)
+            </div>
             <div className="flex items-center gap-2 text-white">
               <Thermometer className="w-5 h-5 text-green-400" /> {resumo.material_total_kg} kg de material
             </div>
@@ -240,9 +248,6 @@ export default function RotasPage() {
             </div>
             <div className="flex items-center gap-2 text-white">
               <DollarSign className="w-5 h-5 text-green-400" /> R$ {resumo.custo_estimado_reais}
-            </div>
-            <div className="flex items-center gap-2 text-white">
-              <Truck className="w-5 h-5 text-green-400" /> {resumo.capacidade_utilizada_percent}% da capacidade
             </div>
             {resumo.pontos_nao_visitados && (
               <div className="col-span-full mt-4">
@@ -270,54 +275,42 @@ export default function RotasPage() {
         </Card>
       )}
 
-      {rota.length > 0 && (
+      {viagens.length > 0 && (
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle className="text-green-500">Detalhes da Rota</CardTitle>
+            <CardTitle className="text-green-500">Detalhes das Viagens</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {rota.map((r, i) => {
-              const ponto = pontos.find(p => p.id === r.ponto_id) || { name: 'Sede Origem', address: '', number: '', neighborhood: '', city: '', state: '' }
-              const endereco = `${ponto.address}, ${ponto.number} - ${ponto.neighborhood}, ${ponto.city} - ${ponto.state}`
-              const isRetorno = r.retorno
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {viagens.map((viagem) => (
+              <div key={viagem.ordem} className="border border-green-800 rounded-lg p-4 space-y-4">
+                <h3 className="text-lg font-bold text-green-300">Viagem {viagem.ordem}</h3>
+                {viagem.pontos_visitados.map((pontoVisitado, idx) => {
+                  const ponto = pontos.find(p => p.id === pontoVisitado.id)
+                  const endereco = ponto
+                    ? `${ponto.address}, ${ponto.number} - ${ponto.neighborhood}, ${ponto.city} - ${ponto.state}`
+                    : 'Endereço não encontrado'
 
-              return (
-                <div key={i} className="border border-zinc-700 rounded-md p-4">
-                  <div className="flex flex-wrap items-center gap-4 text-white">
-                    <MapPin className="w-5 h-5 text-green-400" />
-                    <span className="font-semibold">{ponto.name}</span>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-muted-foreground">
-                    <span className="truncate max-w-[90%]">{endereco}</span>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="text-blue-400"
-                      onClick={() => {
-                        const destino = encodeURIComponent(`${ponto.address}, ${ponto.number}, ${ponto.neighborhood}, ${ponto.city}, ${ponto.state}`)
-                        const origemPonto = i === 0
-                          ? { address: 'Rua do Cooper', number: '123', neighborhood: 'Centro', city: 'Taboão da Serra', state: 'SP' }
-                          : pontos.find(p => p.id === rota[i - 1].ponto_id)
-                        const origemEndereco = encodeURIComponent(`${origemPonto?.address}, ${origemPonto?.number}, ${origemPonto?.neighborhood}, ${origemPonto?.city}, ${origemPonto?.state}`)
-                        window.open(`https://www.google.com/maps/dir/?api=1&origin=${origemEndereco}&destination=${destino}&travelmode=driving`, '_blank')
-                      }}
-                    >
-                      <MapPin className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-4 mt-2 text-white">
-                    <Thermometer className="w-5 h-5 text-green-400" /> {r.material_estimado_kg} kg
-                    <ArrowLeftRight className="w-5 h-5 text-green-400" /> {r.distancia_km} km
-                    <Clock className="w-5 h-5 text-green-400" /> {Math.round(r.duracao_min)} min
-                    {isRetorno && (
-                      <span className="text-yellow-400 flex items-center gap-1">
-                        <ArrowLeftRight className="w-4 h-4" /> Retorno à base
-                      </span>
-                    )}
-                  </div>
+                  return (
+                    <div key={idx} className="border border-zinc-700 rounded-md p-4 space-y-2">
+                      <div className="flex items-center gap-2 text-white">
+                        <MapPin className="w-5 h-5 text-green-400" />
+                        <span className="font-semibold">{ponto?.name || pontoVisitado.id}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground ml-6">{endereco}</p>
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-white mt-1">
+                        <Thermometer className="w-5 h-5 text-green-400" /> {pontoVisitado.coletado_kg} kg
+                        <ArrowLeftRight className="w-5 h-5 text-green-400" /> {pontoVisitado.distancia_km} km
+                        <Clock className="w-5 h-5 text-green-400" /> {Math.round(pontoVisitado.duracao_min)} min
+                      </div>
+                    </div>
+                  )
+                })}
+                <div className="text-sm text-yellow-300 flex gap-2 items-center mt-2">
+                  <ArrowLeftRight className="w-4 h-4" />
+                  Retorno à base incluso
                 </div>
-              )
-            })}
+              </div>
+            ))}
           </CardContent>
         </Card>
       )}
