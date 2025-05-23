@@ -128,7 +128,7 @@ export function PessoaForm({ tipo }: Props) {
       console.error(error)
       alert('Erro ao salvar dados!')
     } else {
-      router.push(tipo === 'pf' ? '/dashboard' : '/dashboard-pj')
+      router.push(tipo === 'pf' ? '/dashboard' : '/dashboard/empresa')
     }
   }
 
