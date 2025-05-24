@@ -61,7 +61,7 @@ export default function EmpresaDashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/')
+    router.push('/home')
   }
 
   if (!usuario || !dados) return <p className="text-white p-6">Carregando...</p>
@@ -160,7 +160,7 @@ export default function EmpresaDashboard() {
           />
           <FeatureCard
             icon={<Settings className="w-10 h-10 text-green-500" />}
-            redirect="/servicos"
+            redirect="/coletaform"
             title="Serviços"
             description="Conheça todos os serviços que oferecemos."
             buttonLabel="Ver serviços"

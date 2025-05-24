@@ -9,7 +9,7 @@ export function FeatureSection() {
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
         <FeatureCard
           icon={<Leaf className="text-green-400" />}
-          redirect=''
+          redirect='/tutoriais'
           title="Aprenda sobre Reciclagem"
           description="Não sabe por onde começar? Veja nossos tutoriais e aprenda a reciclar com consciência."
           borderColor="border-green-800"

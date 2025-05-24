@@ -14,7 +14,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/')
+    router.push('/home')
   }
 
   if (loading) return <p className="text-white p-6">Carregando...</p>
@@ -33,7 +33,7 @@ export default function Dashboard() {
             className="rounded-full border-green-500 text-green-300 hover:bg-green-600/10"
             asChild
           >
-            <Link href="/">Voltar para Home</Link>
+            <Link href="/home">Voltar para Home</Link>
           </Button>
           <Button
             variant="destructive"
@@ -48,7 +48,7 @@ export default function Dashboard() {
       <section className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
         <FeatureCard
           icon={<CalendarCheck className="text-green-400" />}
-          redirect="/dashboard/agendar"
+          redirect="/coletaform"
           title="Agendar Coleta"
           description="Você faz parte de uma empresa ou condomínio? Agende uma visita e nós vamos até você!"
           buttonLabel="Agendar"
@@ -62,7 +62,7 @@ export default function Dashboard() {
         />
         <FeatureCard
           icon={<BookOpenText className="text-green-400" />}
-          redirect="/dashboard/tutoriais"
+          redirect="/tutoriais"
           title="Tutoriais"
           description="Veja materiais educativos para melhorar sua consciência ambiental."
           buttonLabel="Aprender"
